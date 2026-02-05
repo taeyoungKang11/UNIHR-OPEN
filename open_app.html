@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniHR 앱 실행</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .container {
+            text-align: center;
+            color: white;
+        }
+        h1 { font-size: 24px; margin-bottom: 20px; }
+        p { font-size: 16px; opacity: 0.9; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 UniHR 앱을 열고 있습니다...</h1>
+        <p>잠시만 기다려주세요.</p>
+    </div>
+
+    <script>
+        (function() {
+            // 기기 플랫폼 감지
+            const ua = navigator.userAgent.toLowerCase();
+            const isIOS = /iphone|ipad|ipod/.test(ua) && !window.MSStream;
+            const isAndroid = /android/.test(ua);
+            
+            // 딥링크 및 폴백 URL 설정
+            const deepLink = 'unihr://open';
+            let fallbackUrl = '';
+            
+            if (isIOS) {
+                fallbackUrl = 'https://apps.apple.com/kr/app/unihr/id1574289060';
+            } else if (isAndroid) {
+                fallbackUrl = 'https://play.google.com/store/search?q=unihr&c=apps';
+            } else {
+                // PC/웹브라우저
+                fallbackUrl = 'https://play.google.com/store/search?q=unihr&c=apps';
+            }
+            
+            // 딥링크 실행 시도
+            const startTime = Date.now();
+            window.location.href = deepLink;
+            
+            // 앱이 없으면 3초 후 스토어로 이동
+            setTimeout(() => {
+                // 앱이 실행되지 않았으면 스토어로 이동
+                window.location.href = fallbackUrl;
+            }, 3000);
+            
+            // 페이지 종료 감지 (앱 실행 시)
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    // 앱이 실행되어 페이지가 숨겨짐
+                    clearTimeout();
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
