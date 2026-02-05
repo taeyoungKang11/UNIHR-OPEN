@@ -86,7 +86,13 @@
           </div>div>
     
       <script>
-              const deepLink = 'unihr://open';
+              const deepLinkPatterns = [
+                                       'unihr://open',
+                                       'unihr://',
+                                       'unihr-app://open',
+                                       'bizentro-unihr://open',
+                                       'com.bizentro.unihr://open'
+                                       ];
               const appStoreUrl = 'https://apps.apple.com/kr/app/unihr/id1574289060';
               const playStoreUrl = 'https://play.google.com/store/search?q=unihr&c=apps';
 
