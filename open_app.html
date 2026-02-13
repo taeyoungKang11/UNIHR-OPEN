@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UniHR 앱 연결</title>
     <style>
-        /* 기본 스타일 및 스피너 애니메이션 */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -14,46 +13,180 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 20px;
         }
-        .container { text-align: center; color: white; padding: 20px; width: 100%; }
+        .container { 
+            text-align: center; 
+            color: white; 
+            max-width: 400px; 
+            width: 100%;
+        }
         .spinner {
             border: 4px solid rgba(255, 255, 255, 0.3);
             border-top: 4px solid white;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             animation: spin 1s linear infinite;
             margin: 0 auto;
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        p { margin-top: 20px; font-size: 18px; font-weight: 500; }
+        @keyframes spin { 
+            0% { transform: rotate(0deg); } 
+            100% { transform: rotate(360deg); } 
+        }
+        .message { 
+            margin-top: 24px; 
+            font-size: 18px; 
+            font-weight: 500;
+            line-height: 1.5;
+        }
+        .button-container {
+            display: none;
+            margin-top: 30px;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .button-container.show { display: flex; }
+        .store-button {
+            padding: 16px 32px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid white;
+            border-radius: 12px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+        .store-button:hover { 
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        .store-button:active { transform: translateY(0); }
+        .desktop-info {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .desktop-info.show { display: block; }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="spinner"></div>
-        <p id="message">스토어로 이동 중입니다...</p>
+        <div class="spinner" id="spinner"></div>
+        <div class="message" id="message">스토어로 이동 중입니다...</div>
+        
+        <div class="button-container" id="buttonContainer">
+            <a href="#" class="store-button" id="storeButton">스토어로 이동하기</a>
+        </div>
+
+        <div class="desktop-info" id="desktopInfo">
+            📱 모바일 기기에서 접속하시면<br>
+            자동으로 앱 스토어로 연결됩니다
+        </div>
     </div>
 
     <script>
-        /**
-         * 앱 스토어 리다이렉트 로직
-         */
-        window.onload = function() {
-            const appStoreUrl = 'https://apps.apple.com/kr/app/unihr/id1574289060';
-            const playStoreUrl = 'https://play.google.com/store/search?q=unihr&c=apps';
-
-            const ua = navigator.userAgent.toLowerCase();
-            const isIOS = /iphone|ipad|ipod/.test(ua);
+        (function() {
+            'use strict';
             
-            // 1. 타겟 URL 결정
-            const targetUrl = isIOS ? appStoreUrl : playStoreUrl;
-
-            // 2. 이동 실행 (괄호 누락 수정 완료)
-            setTimeout(function() {
-                window.location.href = targetUrl;
-            }, 300); // 여기서 ); 가 정확히 닫혀야 합니다.
-        };
+            // 스토어 URL 설정
+            const STORES = {
+                ios: 'https://apps.apple.com/kr/app/unihr/id1574289060',
+                android: 'https://play.google.com/store/apps/details?id=com.bizentro.mobile.hrapp'
+            };
+            
+            // DOM 요소
+            const elements = {
+                spinner: document.getElementById('spinner'),
+                message: document.getElementById('message'),
+                buttonContainer: document.getElementById('buttonContainer'),
+                storeButton: document.getElementById('storeButton'),
+                desktopInfo: document.getElementById('desktopInfo')
+            };
+            
+            /**
+             * User Agent 기반 디바이스 감지
+             */
+            function detectDevice() {
+                const ua = navigator.userAgent.toLowerCase();
+                
+                if (/iphone|ipad|ipod/.test(ua)) {
+                    return 'ios';
+                }
+                if (/android/.test(ua)) {
+                    return 'android';
+                }
+                return 'desktop';
+            }
+            
+            /**
+             * UI 업데이트
+             */
+            function updateUI(device, storeName) {
+                if (device === 'desktop') {
+                    elements.spinner.style.display = 'none';
+                    elements.message.textContent = '모바일 기기에서 접속해주세요';
+                    elements.desktopInfo.classList.add('show');
+                    return;
+                }
+                
+                elements.message.textContent = storeName + '로 이동 중입니다...';
+            }
+            
+            /**
+             * 폴백 UI 표시
+             */
+            function showFallback() {
+                elements.spinner.style.display = 'none';
+                elements.message.textContent = '자동 이동이 되지 않나요?';
+                elements.buttonContainer.classList.add('show');
+            }
+            
+            /**
+             * 스토어로 리다이렉트
+             */
+            function redirectToStore() {
+                const device = detectDevice();
+                
+                // 스토어 URL 결정
+                const storeUrl = STORES[device] || STORES.ios;
+                const storeName = device === 'ios' ? 'App Store' : 
+                                 device === 'android' ? 'Play Store' : '';
+                
+                // UI 업데이트
+                updateUI(device, storeName);
+                
+                // 버튼에 URL 설정
+                elements.storeButton.href = storeUrl;
+                
+                // 모바일인 경우 즉시 리다이렉트
+                if (device !== 'desktop') {
+                    // 방법 1: location.href (즉시)
+                    window.location.href = storeUrl;
+                    
+                    // 방법 2: location.replace (1초 후 재시도)
+                    setTimeout(function() {
+                        window.location.replace(storeUrl);
+                    }, 1000);
+                    
+                    // 방법 3: 3초 후에도 남아있으면 수동 버튼 표시
+                    setTimeout(showFallback, 3000);
+                }
+            }
+            
+            // 페이지 로드 완료 후 실행
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', redirectToStore);
+            } else {
+                redirectToStore();
+            }
+        })();
     </script>
 </body>
 </html>
