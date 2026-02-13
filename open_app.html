@@ -93,18 +93,25 @@
         }
 
         function openApp() {
+            // 공식 딥링크가 없으므로, 웹 브라우저로 서비스를 이용하게 하거나
+            // 설치 여부를 확인한 후 스토어로 보내는 것이 가장 안전합니다.
+            const webServiceUrl = 'https://your-company.unihr-web-link.com'; // 실제 웹 주소가 있다면 입력
+            
             showLoading(true);
             
-            // 딥링크 호출
-            window.location.href = deepLink;
-
-            // 2.5초 후에도 브라우저가 보인다면(앱이 안 열렸다면) 설치 유도
-            setTimeout(() => {
-                if (!document.hidden) {
+            // 1. 웹 서비스 주소가 있다면 해당 주소로 이동
+            if (webServiceUrl !== 'https://your-company.unihr-web-link.com') {
+                window.location.href = webServiceUrl;
+            } else {
+                // 2. 웹 주소가 없다면 사용자에게 설치 후 실행하도록 안내 문구 변경
+                setTimeout(() => {
                     showLoading(false);
-                    document.getElementById('message').innerHTML = '앱이 설치되어 있지 않거나<br>연결되지 않았습니다.';
-                }
-            }, 2500);
+                    document.getElementById('message').innerHTML = 
+                        '공식 딥링크가 지원되지 않는 환경입니다.<br><b>UniHR 앱을 직접 실행</b>하여<br>기록을 완료해주세요.';
+                    // 자동으로 스토어 이동을 원하시면 아래 주석 해제
+                    // downloadApp(); 
+                }, 1500);
+            }
         }
 
         function downloadApp() {
