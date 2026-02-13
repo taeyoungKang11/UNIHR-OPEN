@@ -1,137 +1,115 @@
 <!DOCTYPE html>
 <html lang="ko">
-    <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>UniHR 앱</title>
-      <style>
-              * { margin: 0; padding: 0; box-sizing: border-box; }
-              body {
-                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                        min-height: 100vh;
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-              }
-              .container {
-                        text-align: center;
-                        color: white;
-                        padding: 20px;
-              }
-              h1 { font-size: 28px; margin-bottom: 15px; }
-              p { font-size: 16px; opacity: 0.9; margin-bottom: 30px; }
-              .buttons {
-                        display: flex;
-                        flex-direction: column;
-                        gap: 10px;
-                        max-width: 300px;
-              }
-              button {
-                        padding: 15px 30px;
-                        font-size: 16px;
-                        border: none;
-                        border-radius: 8px;
-                        cursor: pointer;
-                        transition: all 0.3s ease;
-                        font-weight: 600;
-              }
-              .btn-primary {
-                        background: white;
-                        color: #667eea;
-              }
-              .btn-primary:active {
-                        transform: scale(0.98);
-                        opacity: 0.8;
-              }
-              .btn-secondary {
-                        background: rgba(255, 255, 255, 0.2);
-                        color: white;
-                        border: 2px solid white;
-              }
-              .btn-secondary:active {
-                        background: rgba(255, 255, 255, 0.3);
-              }
-              .loading {
-                        display: none;
-                        margin-top: 20px;
-              }
-              .spinner {
-                        border: 4px solid rgba(255, 255, 255, 0.3);
-                        border-top: 4px solid white;
-                        border-radius: 50%;
-                        width: 40px;
-                        height: 40px;
-                        animation: spin 1s linear infinite;
-                        margin: 0 auto;
-              }
-              @keyframes spin {
-                        0% { transform: rotate(0deg); }
-                        100% { transform: rotate(360deg); }
-              }
-            </style>
-    </head>
-    <body>
-          <div class="container">
-                  <h1>🎯 UniHR 앱</h1>
-              <p id="message">앱을 열거나 다운로드하세요</p>p>
-              <div class="buttons">
-                    <button class="btn-primary" onclick="openApp()">앱 열기</button>button>
-                    <button class="btn-secondary" onclick="downloadApp()">다운로드</button>button>
-              </div>div>
-              <div class="loading" id="loading">
-                    <div class="spinner"></div>div>
-                    <p style="margin-top: 15px;">앱을 열고 있습니다...</p>p>
-              </div>div>
-          </div>div>
-    
-      <script>
-              const deepLinkPatterns = [
-                                       'unihr://open',
-                                       'unihr://',
-                                       'unihr-app://open',
-                                       'bizentro-unihr://open',
-                                       'com.bizentro.unihr://open'
-                                       ];
-              const appStoreUrl = 'https://apps.apple.com/kr/app/unihr/id1574289060';
-              const playStoreUrl = 'https://play.google.com/store/search?q=unihr&c=apps';
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniHR 앱 연결</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            text-align: center;
+            color: white;
+            padding: 20px;
+            width: 100%;
+        }
+        h1 { font-size: 28px; margin-bottom: 15px; }
+        p { font-size: 16px; opacity: 0.9; margin-bottom: 30px; line-height: 1.5; }
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 600;
+        }
+        .btn-primary { background: white; color: #667eea; }
+        .btn-primary:active { transform: scale(0.98); background: #f0f0f0; }
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+        }
+        .btn-secondary:active { background: rgba(255, 255, 255, 0.3); }
+        .loading { display: none; margin-top: 20px; }
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 UniHR 앱</h1>
+        <p id="message">출퇴근 기록을 위해<br>앱을 열거나 다운로드하세요</p>
+        
+        <div class="buttons">
+            <button class="btn-primary" onclick="openApp()">앱 열기</button>
+            <button class="btn-secondary" onclick="downloadApp()">다운로드</button>
+        </div>
 
-              function getStoreUrl() {
-                        const ua = navigator.userAgent.toLowerCase();
-                        const isIOS = /iphone|ipad|ipod/.test(ua) && !window.MSStream;
-                        return isIOS ? appStoreUrl : playStoreUrl;
-              }
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p style="margin-top: 15px;">앱을 연결하는 중입니다...</p>
+        </div>
+    </div>
 
-              function showLoading(show) {
-                        document.getElementById('loading').style.display = show ? 'block' : 'none';
-                        document.querySelector('.buttons').style.display = show ? 'none' : 'flex';
-                        document.getElementById('message').textContent = show ? '앱을 열고 있습니다...' : '앱을 열거나 다운로드하세요';
-              }
+    <script>
+        // 가장 가능성 높은 딥링크 패턴 (unihr:// 가 기본값일 확률이 높음)
+        const deepLink = 'unihr://open'; 
+        const appStoreUrl = 'https://apps.apple.com/kr/app/unihr/id1574289060';
+        const playStoreUrl = 'https://play.google.com/store/apps/details?id=com.bizentro.unihr'; // 정확한 ID로 수정
 
-              function openApp() {
-                        showLoading(true);
-                        window.location.href = deepLink;
+        function getStoreUrl() {
+            const ua = navigator.userAgent.toLowerCase();
+            const isIOS = /iphone|ipad|ipod/.test(ua);
+            return isIOS ? appStoreUrl : playStoreUrl;
+        }
 
-                        // 2초 후 앱이 열리지 않으면 메시지 변경
-                        setTimeout(() => {
-                                    const messageEl = document.getElementById('message');
-                                    if (document.visibilityState === 'visible') {
-                                                  messageEl.textContent = '앱이 설치되지 않았습니다. 다운로드해주세요.';
-                                                  showLoading(false);
-                                    }
-                        }, 2000);
-              }
+        function showLoading(show) {
+            document.getElementById('loading').style.display = show ? 'block' : 'none';
+            document.querySelector('.buttons').style.display = show ? 'none' : 'flex';
+        }
 
-              function downloadApp() {
-                        window.location.href = getStoreUrl();
-              }
+        function openApp() {
+            showLoading(true);
+            
+            // 딥링크 호출
+            window.location.href = deepLink;
 
-              // 페이지 로드 시 자동으로 앱 열기 시도 (옵션)
-              // openApp();
-      </script>
-    </body>
-</html>html>
-      </script></h1>
-    </body>
-      </style></title>
-    </head>
+            // 2.5초 후에도 브라우저가 보인다면(앱이 안 열렸다면) 설치 유도
+            setTimeout(() => {
+                if (!document.hidden) {
+                    showLoading(false);
+                    document.getElementById('message').innerHTML = '앱이 설치되어 있지 않거나<br>연결되지 않았습니다.';
+                }
+            }, 2500);
+        }
+
+        function downloadApp() {
+            window.location.href = getStoreUrl();
+        }
+    </script>
+</body>
+</html>
